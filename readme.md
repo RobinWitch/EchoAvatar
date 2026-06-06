@@ -1,7 +1,7 @@
 # EchoAvatar: Real-time Generative Avatar Animation from Audio Streams
 
 <center>
-  <a href="https://robinwitch.github.io/EchoAvatar-Page/">Project Page</a> 
+  <a href="https://robinwitch.github.io/EchoAvatar-Page/">Project Page</a> •
   <a href="https://arxiv.org/abs/2605.28272">Arxiv Paper</a> •
   <a href="https://youtu.be/GydR3H6YwBQ">Demo Video</a> •
   <a href="#citation">Citation</a>
