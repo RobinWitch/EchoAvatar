@@ -10,8 +10,8 @@
 ## Release Plans
 
 - [x] Real-time deployment code.
-- [] Code for evaluating BEATv2 benchmark results.
-- [] Training code.
+- [ ] Code for evaluating BEATv2 benchmark results.
+- [ ] Training code.
 
 
 ## Environment Setup
