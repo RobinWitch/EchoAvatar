@@ -1,0 +1,31 @@
+# Large checkpoints are hosted on Hugging Face.
+ckpts/
+
+# Python caches
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+**__pycache__**
+
+# Local environments
+.venv/
+venv/
+env/
+.env
+
+# Local outputs
+logs/
+runs/
+wandb/
+outputs/
+*.log
+
+# Editor and OS files
+.vscode/
+.DS_Store
+
+# Agent
+.agents
+.claude
