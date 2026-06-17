@@ -36,6 +36,7 @@ Download the checkpoints into the repository root before running inference:
 
 ```bash
 hf download robinwitch/EchoAvatar --local-dir . --include "ckpts/**"
+git clone https://huggingface.co/robinwitch/hf_transformer_mhubert_base_vp_en_es_fr_it3 ./ckpts/hf_transformer_mhubert_base_vp_en_es_fr_it3
 ```
 
 ## Real-time deployment
@@ -233,4 +234,4 @@ If you find our code or paper helps, please consider citing:
 ## Acknowledgments
 Thanks to [EMAGE](https://github.com/PantoMatrix/PantoMatrix), [ZeroEGGS](https://github.com/ubisoft/ubisoft-laforge-ZeroEGGS), [MotoricaDanceDataset](https://github.com/simonalexanderson/MotoricaDanceDataset), [motorica-retarget
 ](https://github.com/orangeduck/motorica-retarget),[zeroeggs-retarget
-](https://github.com/orangeduck/zeroeggs-retarget) , [torchtune](https://github.com/meta-pytorch/torchtune), [ichigo](https://github.com/menloresearch/ichigo),  [T2M-GPT](https://github.com/Mael-zys/T2M-GPT), [MoMask](https://github.com/EricGuo5513/momask-codes), [MECo](https://github.com/RobinWitch/MECo), [verl](https://github.com/verl-project/verl), [vLLM](https://github.com/vllm-project/vllm),[encodec](https://github.com/facebookresearch/encodec), our code is partially borrowing from them. Please check these useful repos.
+](https://github.com/orangeduck/zeroeggs-retarget) , [torchtune](https://github.com/meta-pytorch/torchtune), [ichigo](https://github.com/menloresearch/ichigo),  [T2M-GPT](https://github.com/Mael-zys/T2M-GPT), [MoMask](https://github.com/EricGuo5513/momask-codes), [MECo](https://github.com/RobinWitch/MECo), [verl](https://github.com/verl-project/verl), [vLLM](https://github.com/vllm-project/vllm), [encodec](https://github.com/facebookresearch/encodec), our code is partially borrowing from them. Please check these useful repos.

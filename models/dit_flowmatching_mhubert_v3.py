@@ -506,7 +506,7 @@ class Audio2FaceGPT(nn.Module):
     ):
         super().__init__()
         self.cfg = cfg
-        self.audio_encoder = HubertModel.from_pretrained('/mnt/data/cbh/face/cbh_dpt_face/ckpt/my_transformer_mhubert_base_vp_en_es_fr_it3')
+        self.audio_encoder = HubertModel.from_pretrained('./ckpts/hf_transformer_mhubert_base_vp_en_es_fr_it3')
         # freeze feature extractor and some early layers
         self.audio_encoder.feature_extractor._freeze_parameters()
         frozen_layers = [0, 1]
