@@ -24,7 +24,7 @@ conda activate echoavatar
 pip install -r requirements.txt
 ```
 
-If you run the real-time deployment across two machines, install this environment on the Ubuntu inference server. On the local Windows machine, only the following packages are required:
+If you run the real-time deployment across two machines, install this environment on the Linux inference server. On the local Windows machine, only the following packages are required:
 
 ```bash
 pip install sounddevice keyboard huggingface_hub
@@ -50,7 +50,7 @@ This section describes how to deploy the real-time inference pipeline. After the
 The deployment has two sides:
 
 - **Local Windows machine**: runs Unity, receives audio from the browser or voice agent, and uses `tools/pushwav2server.py` to stream audio to the server.
-- **Ubuntu inference server**: runs the audio-to-motion inference script, receives the audio stream, generates face/body motion, and sends motion data back to Unity.
+- **Linux inference server**: runs the audio-to-motion inference script, receives the audio stream, generates face/body motion, and sends motion data back to Unity.
 
 The basic data flow is:
 
@@ -58,14 +58,14 @@ The basic data flow is:
 Browser / voice agent audio output
   -> VB-CABLE virtual audio device
   -> Unity calls tools/pushwav2server.py
-  -> Ubuntu audio-to-motion inference server
+  -> Linux audio-to-motion inference server
   -> Unity receives motion data and drives the avatar
 ```
 
 Recommended setup:
 
 - Local side: Windows machine.
-- Server side: Ubuntu server with NVIDIA GPU. For simultaneous face and body generation, we recommend dual RTX 3090 or better. If you only generate face motion or only body motion, one GPU is enough.
+- Server side: Linux server with NVIDIA GPU. For simultaneous face and body generation, we recommend dual RTX 3090 or better. If you only generate face motion or only body motion, one GPU is enough.
 
 ### 2. Windows setup
 
@@ -95,7 +95,7 @@ If Chrome does not appear in the app list, open a webpage and play audio in Chro
 
 #### 2.3 Prepare the audio streaming tools
 
-Copy the local repository `tools` directory to the Windows machine. Unity will call scripts from this directory, including `tools/pushwav2server.py`, to stream local audio to the Ubuntu inference server.
+Copy the local repository `tools` directory to the Windows machine. Unity will call scripts from this directory, including `tools/pushwav2server.py`, to stream local audio to the Linux inference server.
 
 Then list the local audio devices:
 
@@ -111,7 +111,7 @@ CABLE Output (VB-Audio Virtual Cable)
 
 Record its device index and edit `tools/pushwav2server.py`:
 
-- Set `SERVER_IP` (Line 6) to the Ubuntu inference server IP.
+- Set `SERVER_IP` (Line 6) to the Linux inference server IP.
 - Set `input_device_index` (Line 8) to the device index of `CABLE Output`. The default example value is `2`, but it may be different on your machine.
 
 
@@ -139,7 +139,7 @@ Example:
 
 Adjust the paths according to your local environment. When Unity enters the streaming workflow, it will call this script and send audio from VB-CABLE to the server.
 
-### 3. Ubuntu server setup
+### 3. Linux server setup
 
 Run the audio-to-motion inference script on the server:
 
@@ -150,12 +150,12 @@ scripts/5_streaming_vllm_unity_30fps_bp_attn4_encodec2_multirvq_nbc512_motionexa
 Before launching it:
 
 1. Set `MOTION_SERVER_HOST` (Line 41) to the IP address of the machine running Unity. After generating motion, the inference script connects to this address and sends motion data back to Unity.
-2. Make sure port `12345` on the Ubuntu server is reachable from the Windows machine. This port receives audio from `tools/pushwav2server.py`.
+2. Make sure port `12345` on the Linux server is reachable from the Windows machine. This port receives audio from `tools/pushwav2server.py`.
 3. Make sure the required checkpoints exist, for example `./ckpts/body_g` or `./ckpts/body_g_d`.
 
 `MOTION_SERVER_PORT` (Line 45) defaults to `12346` and usually does not need to be changed.
 
-If you also want semantic action control, make sure port `12346` on the Ubuntu server is reachable. In the inference script, this is `TEXT_SERVER_PORT` (Line 726). You can ignore this when only testing browser-audio driving.
+If you also want semantic action control, make sure port `12346` on the Linux server is reachable. In the inference script, this is `TEXT_SERVER_PORT` (Line 726). You can ignore this when only testing browser-audio driving.
 
 ### 4. Launch order
 
@@ -186,9 +186,9 @@ Music audio has no specific timbre or genre requirement.
 
 ### 5. Optional: semantic action control
 
-Only configure this step if you need semantic control. The script can run on the Windows machine or on any other machine that can access port `12346` on the Ubuntu inference server.
+Only configure this step if you need semantic control. The script can run on the Windows machine or on any other machine that can access port `12346` on the Linux inference server.
 
-Before running it, edit `tools/action_send.py` and set `ACTION_SERVER_HOST` (Line 10) to the Ubuntu inference server IP.
+Before running it, edit `tools/action_send.py` and set `ACTION_SERVER_HOST` (Line 10) to the Linux inference server IP.
 
 Then send predefined semantic action signals with:
 
@@ -210,6 +210,92 @@ Timbre requirements depend on the model:
 - If you only need speech-to-gesture, the TTS voice does not need a specific timbre.
 - If you need both speech-to-gesture and music-to-dance in the streaming process, we recommend cloning a female ZeroEGGS voice for speech TTS. The recommended reference audio is `tools/015_Happy_4_x_1_0.wav`.
 
+
+## Dataset Preparation
+
+This workflow retargets ZeroEGGS and Motorica motions to the supplied avatar and prepares BVH files for EchoAvatar. Run the retargeting step on Windows with MotionBuilder, then preprocess the exported BVH files on the Linux server.
+
+### 1. Retarget the source motions on Windows
+
+Install MotionBuilder, then download and extract the source FBX archives:
+
+- [ZeroEGGS retarget FBX](https://theorangeduck.com/media/uploads/Geno/zeroeggs-retarget/fbx.zip)
+- [Motorica retarget FBX](https://theorangeduck.com/media/uploads/Geno/motorica-retarget/fbx.zip)
+
+We use the [AX_female target character](tools/AX_female.7z). Extract this archive into `tools/` so that the target FBX is available at `tools/AX_female/AX_female2.fbx`.
+
+Run the following commands in Windows PowerShell using MotionBuilder's bundled `mobupy.exe`. Replace the installation, repository, and dataset paths with your local paths.
+
+For Motorica:
+
+```powershell
+& "D:\MotionBuilder 2026\bin\x64\mobupy.exe" `
+    "D:\EchoAvatar\tools\motionbuilder_retarget_batch.py" `
+    --target-fbx "D:\EchoAvatar\tools\AX_female\AX_female2.fbx" `
+    --source-dir "D:\datasets\motorica\fbx" `
+    --source-type motorica `
+    --output-dir "D:\datasets\motorica\retarget_AX_female21" `
+    --overwrite
+```
+
+For ZeroEGGS:
+
+```powershell
+& "D:\MotionBuilder 2026\bin\x64\mobupy.exe" `
+    "D:\EchoAvatar\tools\motionbuilder_retarget_batch.py" `
+    --target-fbx "D:\EchoAvatar\tools\AX_female\AX_female2.fbx" `
+    --source-dir "D:\datasets\zeroeggs\fbx" `
+    --source-type zeroeggs `
+    --output-dir "D:\datasets\zeroeggs\retarget_AX_female21" `
+    --overwrite
+```
+
+Each output directory contains `fbx/`, `bvh/`, and a `retarget_report.json` report. The commands above replace existing outputs; omit `--overwrite` to skip files that already have outputs.
+
+### 2. Collect BVH files and audio on the server
+
+On the Linux server, use the environment from [Environment Setup](#environment-setup) and run the remaining commands from the EchoAvatar repository root:
+
+```bash
+conda activate echoavatar
+mkdir -p datasets/zm/raw datasets/zm/wav
+```
+
+Copy the `.bvh` files from both retargeting output directories' `bvh/` subdirectories into `datasets/zm/raw/`, keeping their filenames unchanged.
+
+Download the corresponding audio files from the [ZeroEGGS](https://github.com/ubisoft/ubisoft-laforge-ZeroEGGS) and [MotoricaDanceDataset](https://github.com/simonalexanderson/MotoricaDanceDataset) repositories and place them in `datasets/zm/wav/`.
+
+### 3. Prepare the BVH format and augment the motions
+
+Run the combined preprocessing script:
+
+```bash
+python tools/prepare_bvh_format.py \
+    --input-dir datasets/zm/raw \
+    --output-dir datasets/zm/all \
+    --workers 8
+```
+
+The script performs the following steps:
+
+1. Filter the retargeted skeleton from 355 joints to 88 joints.
+2. Rotate the coordinate system by +90 degrees around X to convert Y-up to Z-up, transforming joint offsets, root positions, and joint rotations together. Write Motorica files (filenames beginning with `kth`) in `ZYX` Euler channel order and the remaining ZeroEGGS files in `XYZ` order.
+3. Normalize the initial position and heading of **both ZeroEGGS and Motorica**: set the first frame's root X and Y positions to zero, preserve its Z height, and remove its initial heading around Z. Apply the same translation and rotation to the full motion and root trajectory.
+4. For Motorica only, swap left/right joints and reflect the normalized motion along X to generate an additional `<original_stem>_mirror.bvh` file.
+
+ZeroEGGS already includes original/mirrored pairs. Both are normalized, and no additional mirrors are generated for these files. The script uses the Euler orders above directly and does not require a reference BVH directory.
+
+Source BVH files remain in `datasets/zm/raw/`; processed files are written to `datasets/zm/all/`. Existing output files are skipped by default. Add `--overwrite` to regenerate them.
+
+### 4. Create the training and validation splits
+
+Copy the processed BVH files from `datasets/zm/all/` using the supplied split lists:
+
+```bash
+mkdir -p datasets/zm/train datasets/zm/valid
+rsync -a --ignore-missing-args --files-from=./datasets/zm/train.txt ./datasets/zm/all/ ./datasets/zm/train/
+rsync -a --ignore-missing-args --files-from=./datasets/zm/valid.txt ./datasets/zm/all/ ./datasets/zm/valid/
+```
 
 ## Citation
 

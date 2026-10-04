@@ -344,7 +344,7 @@ if __name__ == '__main__':
     
     test_repre = False
     if test_repre:
-        tmp_bvh,_,_,_,_ = preprocess_animation('./datasets/xx_zm_reduce/all/kthjazz_gCH_sFM_cAll_d02_mCH_ch01_beatlestreetwashboardbandfortyandtight_003.bvh')
+        tmp_bvh,_,_,_,_ = preprocess_animation('./datasets/zm/all/kthjazz_gCH_sFM_cAll_d02_mCH_ch01_beatlestreetwashboardbandfortyandtight_003.bvh')
         tmp_bvh_rot = tmp_bvh[...,:528]
         tmp_bvh_pos = tmp_bvh[...,528:]
         tmp_bvh_rot = torch.tensor(tmp_bvh_rot)
@@ -377,13 +377,13 @@ if __name__ == '__main__':
 
     
     if make_dataset and fps == 60:
-        train_source_path = './datasets/xx_zm_reduce//train'
-        target_path = './datasets/xx_zm_reduce/train_processed_60fps'
+        train_source_path = './datasets/zm/train'
+        target_path = './datasets/zm/train_processed_60fps'
         train_list =  make_zeggs_dataset(train_source_path,fps=60)
         np.save(target_path, train_list)
         
-        valid_source_path = './datasets/xx_zm_reduce//valid'
-        target_path = './datasets/xx_zm_reduce/valid_processed_60fps'
+        valid_source_path = './datasets/zm/valid'
+        target_path = './datasets/zm/valid_processed_60fps'
         valid_list =  make_zeggs_dataset(valid_source_path,fps=60)
         np.save(target_path, valid_list)
         
@@ -393,17 +393,17 @@ if __name__ == '__main__':
         all_pose = np.concatenate(all_pose,axis=0)
         mean = all_pose.mean(axis=0)
         std = all_pose.std(axis=0)
-        np.save('./datasets/xx_zm_reduce/mean_std_60fps.npy', [mean, std])
+        np.save('./datasets/zm/mean_std_60fps.npy', [mean, std])
         
 
     if make_dataset and fps == 30:
-        train_source_path = './datasets/xx_zm_reduce//train'
-        target_path = './datasets/xx_zm_reduce/train_processed_30fps'
+        train_source_path = './datasets/zm/train'
+        target_path = './datasets/zm/train_processed_30fps'
         train_list =  make_zeggs_dataset(train_source_path,fps=30)
         np.save(target_path, train_list)
         
-        valid_source_path = './datasets/xx_zm_reduce//valid'
-        target_path = './datasets/xx_zm_reduce/valid_processed_30fps'
+        valid_source_path = './datasets/zm/valid'
+        target_path = './datasets/zm/valid_processed_30fps'
         valid_list =  make_zeggs_dataset(valid_source_path,fps=30)
         np.save(target_path, valid_list)
         
@@ -413,4 +413,4 @@ if __name__ == '__main__':
         all_pose = np.concatenate(all_pose,axis=0)
         mean = all_pose.mean(axis=0)
         std = all_pose.std(axis=0)
-        np.save('./datasets/xx_zm_reduce/mean_std_30fps.npy', [mean, std])
+        np.save('./datasets/zm/mean_std_30fps.npy', [mean, std])

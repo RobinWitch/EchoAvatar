@@ -1,6 +1,9 @@
 # Large checkpoints are hosted on Hugging Face.
 ckpts/
 
+# Keep datasets local; split lists are tracked explicitly.
+data*
+
 # Python caches
 *.py[cod]
 *$py.class
@@ -19,7 +22,7 @@ env/
 logs/
 runs/
 wandb/
-outputs/
+output*
 *.log
 
 # Editor and OS files
