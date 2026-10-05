@@ -26,3 +26,5 @@ pyrender
 smplx==0.1.28
 trimesh==4.11.5
 vector-quantize-pytorch==1.23.2
+tensorboard==2.21.0
+wandb==0.29.0

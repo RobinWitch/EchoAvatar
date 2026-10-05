@@ -297,6 +297,23 @@ rsync -a --ignore-missing-args --files-from=./datasets/zm/train.txt ./datasets/z
 rsync -a --ignore-missing-args --files-from=./datasets/zm/valid.txt ./datasets/zm/all/ ./datasets/zm/valid/
 ```
 
+## Training
+
+### 1. Train the body motion tokenizer
+
+Train a separate motion tokenizer for each body configuration: lower body, upper body, hands, and whole body.
+
+```bash
+CUDA_VISIBLE_DEVICES=0 taskset -c 0-15 python vq_train_bp_30fps_wandb_attn_poolmlp.py --body_part lower
+CUDA_VISIBLE_DEVICES=1 taskset -c 16-31 python vq_train_bp_30fps_wandb_attn_poolmlp.py --body_part upper
+CUDA_VISIBLE_DEVICES=2 taskset -c 48-63 python vq_train_bp_30fps_wandb_attn_poolmlp.py --body_part hands
+CUDA_VISIBLE_DEVICES=3 taskset -c 64-80 python vq_train_bp_30fps_wandb_attn_poolmlp.py --body_part whole
+```
+
+### 2. Train the body motion generator
+
+### 3. Train the face motion generator
+
 ## Citation
 
 If you find our code or paper helps, please consider citing:
