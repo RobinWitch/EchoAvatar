@@ -1,5 +1,6 @@
 torch==2.8.0
 torchaudio==2.8.0
+torchvision==0.23.0
 diffusers==0.36.0
 einops==0.8.1
 huggingface_hub==0.36.2
@@ -7,9 +8,11 @@ librosa==0.11.0
 omegaconf==2.3.0
 orjson==3.11.5
 safetensors==0.6.2
+numpy==2.2.0
 scipy==1.16.2
 soundfile==0.13.1
 timm==1.0.22
+tqdm==4.67.1
 transformers==4.55.0
 vllm==0.11.0
 keyboard

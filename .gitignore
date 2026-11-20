@@ -1,5 +1,9 @@
-# Large checkpoints are hosted on Hugging Face.
+# Large checkpoints are distributed separately from Git.
 ckpts/
+
+# Face training assets are distributed as a separate Google Drive archive.
+echoavatar_face_training_assets*.tar.gz
+echoavatar_face_training_assets*.tar.gz.sha256
 
 # Keep datasets local; split lists are tracked explicitly.
 data*

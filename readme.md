@@ -11,7 +11,9 @@
 
 - [x] Real-time deployment code.
 - [ ] Code for evaluating BEATv2 benchmark results.
-- [ ] Training code.
+- [x] Body motion tokenizer training code.
+- [x] Face motion generator training code.
+- [ ] Body motion generator training code.
 
 
 ## Environment Setup
@@ -313,6 +315,16 @@ CUDA_VISIBLE_DEVICES=3 taskset -c 64-80 python vq_train_bp_30fps_wandb_attn_pool
 ### 2. Train the body motion generator
 
 ### 3. Train the face motion generator
+
+Download [echoavatar_face_training_assets.tar.gz](https://drive.google.com/file/d/14qewZKVRBm654LO-xBPvqPf7h1ywcULA/view?usp=sharing) (714 MiB).
+It contains 36 paired WAV/LiveLinkFace CSV recordings, normalization statistics,
+mHuBERT weights, and the original face checkpoint.
+
+```bash
+tar -xzf /path/to/echoavatar_face_training_assets.tar.gz
+python prepare_face_data.py
+CUDA_VISIBLE_DEVICES=0 bash scripts/train_face.sh
+```
 
 ## Citation
 

@@ -3,6 +3,7 @@
 # 注意到当前这是一个deterministic的模型，无法产生多样性的结果
 
 import math
+from pathlib import Path
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -503,10 +504,19 @@ class Audio2FaceGPT(nn.Module):
         dropout=0.1,
         max_seq_len=1024,
         diffusion_num_layers=6,
+        mhubert_ckpt=None,
     ):
         super().__init__()
         self.cfg = cfg
-        self.audio_encoder = HubertModel.from_pretrained('./ckpts/hf_transformer_mhubert_base_vp_en_es_fr_it3')
+        if mhubert_ckpt is None:
+            mhubert_ckpt = (
+                Path(__file__).resolve().parents[1]
+                / "ckpts"
+                / "hf_transformer_mhubert_base_vp_en_es_fr_it3"
+            )
+        self.audio_encoder = HubertModel.from_pretrained(
+            str(mhubert_ckpt), local_files_only=True,
+        )
         # freeze feature extractor and some early layers
         self.audio_encoder.feature_extractor._freeze_parameters()
         frozen_layers = [0, 1]
@@ -600,7 +610,7 @@ class Audio2FaceGPT(nn.Module):
         bs, n, _ = motion.shape
 
 
-        audio_features = self.extract_audio_feature(audio)
+        audio_features = self.extract_audio_feature(audio, frame_num=n + 1)
         bs, seq_len, _ = audio_features.shape
         device = audio_features.device
         # 投影音频特征和锚点    

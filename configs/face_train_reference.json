@@ -1,0 +1,40 @@
+{
+  "description": "Reference settings used by the default training command; runtime overrides use CLI flags.",
+  "data_dir": "datasets/face_livelinkface",
+  "mhubert_ckpt": "ckpts/hf_transformer_mhubert_base_vp_en_es_fr_it3",
+  "batch_size": 128,
+  "window_size": 64,
+  "n_layers": 4,
+  "n_heads": 8,
+  "mlp_ratio": 4,
+  "hidden_size": 64,
+  "diffusion_num_layers": 3,
+  "lr": 0.0002,
+  "warm_up_iter": 1000,
+  "total_iter": 300000,
+  "lr_scheduler": [
+    100000,
+    200000
+  ],
+  "gamma": 0.1,
+  "weight_decay": 0.0,
+  "seed": 123,
+  "num_workers": 8,
+  "save_every": 5000,
+  "device": "cuda",
+  "use_wandb": false,
+  "face_channels": 52,
+  "audio_sample_rate": 16000,
+  "face_fps": 30,
+  "augmentation_factors": [
+    0.9,
+    1.0,
+    1.1
+  ],
+  "frozen_audio_components": [
+    "feature_extractor",
+    "feature_projection",
+    "encoder.layers.0",
+    "encoder.layers.1"
+  ]
+}
